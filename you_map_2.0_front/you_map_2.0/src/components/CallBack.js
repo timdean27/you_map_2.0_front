@@ -1,8 +1,7 @@
-// Callback.js
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const Callback = () => {
+const Callback = ({ setIsLoggedIn }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -14,6 +13,9 @@ const Callback = () => {
       if (accessToken) {
         // Handle successful login, e.g., save token to state or local storage
         console.log('Login successful:', accessToken);
+
+        // Update the isLoggedIn state
+        setIsLoggedIn(true);
       } else {
         // Handle login error
         console.error('Login error');
@@ -24,7 +26,7 @@ const Callback = () => {
     };
 
     handleCallback();
-  }, [location, navigate]);
+  }, [location, navigate, setIsLoggedIn]);
 
   return <div>Redirecting...</div>;
 };
