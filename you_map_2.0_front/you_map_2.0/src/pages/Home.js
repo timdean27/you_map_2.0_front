@@ -1,10 +1,11 @@
 import React from 'react';
 
-const Home = ({ userEmail }) => {
+const Home = ({ userCredentials }) => {
   return (
     <div>
       <h2>Welcome to the Home Page</h2>
-      <p>User Email: {userEmail}</p>
+      <p>User Emails: {userCredentials.email}</p>
+      {console.log(userCredentials)}
     </div>
   );
 };

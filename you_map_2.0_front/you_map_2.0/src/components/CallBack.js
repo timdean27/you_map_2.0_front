@@ -1,7 +1,8 @@
+// Callback.js
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const Callback = ({ setIsLoggedIn }) => {
+const Callback = ({ setIsLoggedIn, setUserCredentials }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -11,13 +12,25 @@ const Callback = ({ setIsLoggedIn }) => {
       const accessToken = params.get('access_token');
 
       if (accessToken) {
-        // Handle successful login, e.g., save token to state or local storage
-        console.log('Login successful:', accessToken);
+        try {
+          // Fetch user details from Google using the access token
+          const userDetailsResponse = await fetch('https://www.googleapis.com/oauth2/v1/userinfo', {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
 
-        // Update the isLoggedIn state
-        setIsLoggedIn(true);
+          if (userDetailsResponse.ok) {
+            const userDetails = await userDetailsResponse.json();
+            setIsLoggedIn(true);
+            setUserCredentials(userDetails);
+          } else {
+            console.error('Failed to fetch user details from Google');
+          }
+        } catch (error) {
+          console.error('Error fetching user details:', error);
+        }
       } else {
-        // Handle login error
         console.error('Login error');
       }
 
@@ -26,7 +39,7 @@ const Callback = ({ setIsLoggedIn }) => {
     };
 
     handleCallback();
-  }, [location, navigate, setIsLoggedIn]);
+  }, [location, navigate, setIsLoggedIn, setUserCredentials]);
 
   return <div>Redirecting...</div>;
 };
