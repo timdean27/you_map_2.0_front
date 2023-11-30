@@ -1,35 +1,28 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import LogoutButton from './LogoutButton';
+// GoogleLoginButton.js
+import React from 'react';
+import { useNavigate } from 'react-router-dom';  // Correct import statement
 
-const GoogleLoginButton = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
+const GoogleLoginButton = ({ setIsLoggedIn, setUserEmail }) => {
+  const navigate = useNavigate();  // Use useNavigate instead of useHistory
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     const redirectUri = 'http://localhost:3001/callback';
-    const clientId = '183191142084-gari9r8ulmk9g85ul19h5dh7tfvqqfu3.apps.googleusercontent.com';
+// Accessing environment variables in React
+const googleClientId = "183191142084-gari9r8ulmk9g85ul19h5dh7tfvqqfu3.apps.googleusercontent.com"
+// const googleClientSecret = process.env.REACT_APP_GOOGLE_CLIENT_SECRET;
 
-    const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=email`;
+// Use these variables in your React application
 
-    // Update the order of these lines
+    // Assuming you're using some library for Google OAuth
+    // Adjust the following code based on the library you're using
+    // This is just a generic example
+    const authUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleClientId}&redirect_uri=${redirectUri}&response_type=token&scope=email`;
+
     window.location.href = authUrl;
-    // Move the setIsLoggedIn after the user is authenticated (for example, in the Callback component)
-    setIsLoggedIn(!isLoggedIn);
-
-    // Navigate to the callback page
-    navigate('/callback');
   };
 
-  return (
-    <div>
-      {isLoggedIn ? (
-        <LogoutButton />
-      ) : (
-        <button onClick={handleGoogleLogin}>Login with Google</button>
-      )}
-    </div>
-  );
+  return <button onClick={handleGoogleLogin}>Login with Google</button>;
 };
 
 export default GoogleLoginButton;
+
