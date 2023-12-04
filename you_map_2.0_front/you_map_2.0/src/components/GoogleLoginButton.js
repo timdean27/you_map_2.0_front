@@ -1,24 +1,33 @@
 // GoogleLoginButton.js
-import React from 'react';
-import { auth } from '../firebase'; // Adjust the path based on your project structure
-
-const GoogleLoginButton = () => {
+import React, { useState } from 'react';
+import { signInWithGooglePopup } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+const GoogleLoginButton = ({ onLoginSuccess }) => {
+  const [loginError, setLoginError] = useState(null);
+  const navigate = useNavigate();
   const handleGoogleLogin = async () => {
-    const provider = new auth.GoogleAuthProvider();
     try {
-      const result = await auth().signInWithPopup(provider);
-      // Handle successful login
+      const result = await signInWithGooglePopup();
+      onLoginSuccess(result.user); // Notify parent component about the login success
+
     } catch (error) {
       if (error.code === 'auth/popup-closed-by-user') {
         console.warn('Google login canceled by the user.');
-        // You can provide a user-friendly message or take other actions as needed.
+        // Handle the canceled login if needed
       } else {
         console.error('Google login error:', error.message);
+        setLoginError('Google login failed. Please try again.');
       }
     }
   };
 
-  return <button onClick={handleGoogleLogin}>Login with Google</button>;
+  return (
+    <div>
+      <button onClick={handleGoogleLogin}>Login with Google</button>
+      {loginError && <p>{loginError}</p>}
+    </div>
+  );
 };
 
 export default GoogleLoginButton;
+

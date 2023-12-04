@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { app } from './firebase'; // Adjust the path based on your project structure
+import { firebaseeApp } from './firebase'; // Adjust the path based on your project structure
 import GoogleLoginButton from './components/GoogleLoginButton';
 import LogoutButton from './components/LogoutButton';
 import Home from './pages/Home';
@@ -13,6 +13,7 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userCredentials, setUserCredentials] = useState('');
   const [firebaseData, setFirebaseData] = useState([]);
+  const [loginError, setLoginError] = useState(null);
 
   useEffect(() => {
     const fetchDataFromFirebase = async () => {
@@ -30,26 +31,10 @@ const App = () => {
     fetchDataFromFirebase();
   }, [isLoggedIn]);
 
-  const handleGoogleLogin = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-      const result = await firebase.auth().signInWithPopup(provider);
-      setIsLoggedIn(true);
-      setUserCredentials(result.user); // Save user credentials if needed
-    } catch (error) {
-      console.error('Google login error:', error.message);
-    }
-  };
-
-  const handleLogout = () => {
-    try {
-      firebase.auth().signOut();
-      console.log('Logout successful');
-      setIsLoggedIn(false);
-      setUserCredentials('');
-    } catch (error) {
-      console.error('Logout error:', error.message);
-    }
+  const handleGoogleLoginSuccess = (user) => {
+    setIsLoggedIn(true);
+    setUserCredentials(user);
+    setLoginError(null);
   };
 
   return (
@@ -57,22 +42,22 @@ const App = () => {
       <div>
         <h1>My React App</h1>
 
-        {/* Display the buttons outside of Routes */}
         {isLoggedIn ? (
           <div>
             {console.log("user logged in", "userCredentials", userCredentials)}
-            <LogoutButton handleLogout={handleLogout} />
+            <LogoutButton setUserCredentials={setUserCredentials}  setIsLoggedIn ={setIsLoggedIn}/>
           </div>
         ) : (
           <div>
             {console.log("user logged out", "userCredentials", userCredentials)}
-            <GoogleLoginButton handleGoogleLogin={handleGoogleLogin} />
+            <GoogleLoginButton onLoginSuccess={handleGoogleLoginSuccess} />
+            {loginError && <p>{loginError}</p>}
           </div>
         )}
 
         <Routes>
           <Route
-            path="/"
+            path="/Home"
             element={<Home userCredentials={userCredentials} firebaseData={firebaseData} />}
           />
         </Routes>
