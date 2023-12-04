@@ -1,6 +1,6 @@
 // App.js
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
@@ -8,6 +8,8 @@ import { firebaseeApp } from './firebase'; // Adjust the path based on your proj
 import GoogleLoginButton from './components/GoogleLoginButton';
 import LogoutButton from './components/LogoutButton';
 import Home from './pages/Home';
+import LandingPage from './pages/LandingPage.js'
+
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -31,10 +33,13 @@ const App = () => {
     fetchDataFromFirebase();
   }, [isLoggedIn]);
 
+
+
   const handleGoogleLoginSuccess = (user) => {
     setIsLoggedIn(true);
     setUserCredentials(user);
     setLoginError(null);
+
   };
 
   return (
@@ -55,12 +60,17 @@ const App = () => {
           </div>
         )}
 
-        <Routes>
-          <Route
-            path="/Home"
-            element={<Home userCredentials={userCredentials} firebaseData={firebaseData} />}
-          />
-        </Routes>
+<Routes>
+  <Route
+    path="/"
+    element={isLoggedIn ? <Navigate to="/Home" /> : <LandingPage userCredentials={userCredentials} firebaseData={firebaseData} />}
+  />
+  <Route
+    path="/Home"
+    element={isLoggedIn ? <Home userCredentials={userCredentials} firebaseData={firebaseData} /> : <Navigate to="/" />}
+  />
+</Routes>
+
       </div>
     </Router>
   );
