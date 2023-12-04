@@ -1,14 +1,16 @@
 // LogoutButton.js
 import React from 'react';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
-
-const LogoutButton = () => {
-  const handleLogout = () => {
+import { firebaseApp, auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+const LogoutButton = ({setIsLoggedIn, setUserCredentials}) => {
+  const navigate = useNavigate();
+  
+  const handleLogout = async () => {
     try {
-      firebase.auth().signOut();
+      await auth.signOut(); // Use auth from firebase, not firebaseApp
       console.log('Logout successful');
+      setIsLoggedIn(false);
+      setUserCredentials('');
     } catch (error) {
       console.error('Logout error:', error.message);
     }
