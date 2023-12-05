@@ -5,8 +5,8 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import { firebaseeApp } from './firebase'; // Adjust the path based on your project structure
-import GoogleLoginButton from './components/GoogleLoginButton';
-import LogoutButton from './components/LogoutButton';
+import GoogleLoginButton from './authentication/GoogleLoginButton.js';
+import LogoutButton from './authentication/LogoutButton.js';
 import Home from './pages/Home';
 import LandingPage from './pages/LandingPage.js'
 
