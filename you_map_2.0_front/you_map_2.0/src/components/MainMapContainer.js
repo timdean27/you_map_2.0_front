@@ -1,48 +1,72 @@
 import React, { useState, useRef } from 'react';
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import AddPin from './AddPin';
-
+import { GoogleMap, LoadScript, Marker, InfoWindow } from '@react-google-maps/api';
+import MarkerOpenPage from './MarkerOpenPage';
 const MainMapContainer = () => {
-  const mapStyles = {
-    height: '50vh',
-    width: '50%',
-  };
+    const mapStyles = {
+        height: '50vh',
+        width: '50%',
+    };
 
-  const defaultCenter = {
-    lat: 37.7749,
-    lng: -122.4194,
-  };
+    const defaultCenter = {
+        lat: 37.7749,
+        lng: -122.4194,
+    };
 
-  const [pins, setPins] = useState([]);
-  const mapRef = useRef(null);
+    const [markers, setMarkers] = useState([]);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+    const mapRef = useRef(null);
 
-  const handlePinAdded = (newPin) => {
-    setPins([...pins, newPin]);
-  };
+    const handleMapRightClick = (e) => {
+        const lat = e.latLng.lat();
+        const lng = e.latLng.lng();
+        const newMarker = { lat, lng };
+        setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
+    };
 
-  const handlePinDeleted = (pinToDelete) => {
-    const updatedPins = pins.filter((pin) => pin !== pinToDelete);
-    setPins(updatedPins);
-  };
+    const handleMarkerClick = (marker) => {
+        setSelectedMarker(marker);
+    };
 
-  return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_API_KEY_GOOGLE_MAPS}>
-      <GoogleMap
-        mapContainerStyle={mapStyles}
-        center={defaultCenter}
-        zoom={10}
-        onLoad={(map) => {
-          // Store the map instance in the ref
-          mapRef.current = map;
-        }}
-      >
-        {pins.map((pin, index) => (
-          <Marker key={index} position={pin} />
-        ))}
-        <AddPin map={mapRef.current} onPinAdded={handlePinAdded} onPinDeleted={handlePinDeleted} />
-      </GoogleMap>
-    </LoadScript>
-  );
-};
+    const handleInfoWindowClose = () => {
+        setSelectedMarker(null);
+    };
+
+    const handleDeleteMarker = () => {
+        setMarkers((prevMarkers) => prevMarkers.filter((marker) => marker !== selectedMarker));
+        setSelectedMarker(null);
+    };
+
+    return (
+        <LoadScript googleMapsApiKey={process.env.REACT_APP_API_KEY_GOOGLE_MAPS}>
+          <GoogleMap
+            mapContainerStyle={mapStyles}
+            center={defaultCenter}
+            zoom={10}
+            onLoad={(map) => {
+              mapRef.current = map;
+              mapRef.current.addListener('rightclick', handleMapRightClick);
+            }}
+          >
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                position={marker}
+                onClick={() => handleMarkerClick(marker)}
+              />
+            ))}
+    
+            {selectedMarker && (
+              <InfoWindow
+                position={selectedMarker}
+                onCloseClick={handleInfoWindowClose}
+              >
+                <MarkerOpenPage marker={selectedMarker} />
+              </InfoWindow>
+            )}
+          </GoogleMap>
+        </LoadScript>
+      );
+    };
 
 export default MainMapContainer;
+
