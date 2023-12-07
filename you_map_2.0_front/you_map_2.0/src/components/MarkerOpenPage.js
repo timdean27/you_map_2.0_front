@@ -1,6 +1,7 @@
 // MarkerOpenPage.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import MarkerPhotoPage from "./MarkerPhotoPage"
 
 const MarkerOpenPage = ({ marker }) => {
   const [locationData, setLocationData] = useState(null);
@@ -35,7 +36,8 @@ const MarkerOpenPage = ({ marker }) => {
 
   return (
     <div>
-      <h3>Marker Information</h3>
+      <h4>Marker Information</h4>
+      <MarkerPhotoPage/>
       <p>Latitude: {marker.lat}</p>
       <p>Longitude: {marker.lng}</p>
       {locationData && (

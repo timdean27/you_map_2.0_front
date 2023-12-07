@@ -4,18 +4,35 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
-import { firebaseeApp } from './firebase'; // Adjust the path based on your project structure
+import { firebaseApp, auth } from './firebase'; // Assuming firebaseApp and auth are correctly imported
 import GoogleLoginButton from './authentication/GoogleLoginButton.js';
 import LogoutButton from './authentication/LogoutButton.js';
 import Home from './pages/Home';
-import LandingPage from './pages/LandingPage.js'
-
+import LandingPage from './pages/LandingPage.js';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userCredentials, setUserCredentials] = useState('');
   const [firebaseData, setFirebaseData] = useState([]);
   const [loginError, setLoginError] = useState(null);
+
+  useEffect(() => {
+    // Check the user's authentication state when the component mounts
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        // User is signed in
+        setIsLoggedIn(true);
+        setUserCredentials(user);
+      } else {
+        // User is signed out
+        setIsLoggedIn(false);
+        setUserCredentials('');
+      }
+    });
+
+    // Cleanup the subscription when the component unmounts
+    return () => unsubscribe();
+  }, []); // Empty dependency array to run the effect only once
 
   useEffect(() => {
     const fetchDataFromFirebase = async () => {
@@ -33,13 +50,10 @@ const App = () => {
     fetchDataFromFirebase();
   }, [isLoggedIn]);
 
-
-
   const handleGoogleLoginSuccess = (user) => {
     setIsLoggedIn(true);
     setUserCredentials(user);
     setLoginError(null);
-
   };
 
   return (
@@ -50,7 +64,7 @@ const App = () => {
         {isLoggedIn ? (
           <div>
             {console.log("user logged in", "userCredentials", userCredentials)}
-            <LogoutButton setUserCredentials={setUserCredentials}  setIsLoggedIn ={setIsLoggedIn}/>
+            <LogoutButton setUserCredentials={setUserCredentials} setIsLoggedIn={setIsLoggedIn} />
           </div>
         ) : (
           <div>
@@ -60,16 +74,16 @@ const App = () => {
           </div>
         )}
 
-<Routes>
-  <Route
-    path="/"
-    element={isLoggedIn ? <Navigate to="/Home" /> : <LandingPage userCredentials={userCredentials} firebaseData={firebaseData} />}
-  />
-  <Route
-    path="/Home"
-    element={isLoggedIn ? <Home userCredentials={userCredentials} firebaseData={firebaseData} /> : <Navigate to="/" />}
-  />
-</Routes>
+        <Routes>
+          <Route
+            path="/"
+            element={isLoggedIn ? <Navigate to="/Home" /> : <LandingPage userCredentials={userCredentials} firebaseData={firebaseData} />}
+          />
+          <Route
+            path="/Home"
+            element={isLoggedIn ? <Home userCredentials={userCredentials} firebaseData={firebaseData} /> : <Navigate to="/" />}
+          />
+        </Routes>
 
       </div>
     </Router>
