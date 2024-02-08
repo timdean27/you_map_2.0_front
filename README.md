@@ -1,0 +1,1 @@
+"Welcome to GlobeTrotter, your passport to a unique social media experience! Share your global adventures through captivating photos on our interactive globe. Powered by Google Maps, enhanced with Firebase for real-time updates, and designed with React and Chakra UI for a seamless interface. Join GlobeTrotter and let your travels shine on the world stage. 🌎📸"
