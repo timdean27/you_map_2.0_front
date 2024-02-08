@@ -7,11 +7,11 @@ const Home = ({ userCredentials, firebaseData }) => {
   return (
     <div>
       <h2>Welcome to the Home Page</h2>
-      {/* <h5>{ENVtest}</h5>
-      {console.log("User Credentials:", userCredentials)}
+      <h5>{ENVtest}</h5>
+      {/* {console.log("User Credentials:", userCredentials)}
       <p>{userCredentials.email}</p>
-      <p>Data from Firebase: {JSON.stringify(firebaseData)}</p>
-      <MainMapContainer /> */}
+      <p>Data from Firebase: {JSON.stringify(firebaseData)}</p> */}
+      <MainMapContainer />
     </div>
   );
 };
