@@ -1,13 +1,13 @@
 import { Flex, Image, Text } from "@chakra-ui/react";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { auth, firestore } from "../../firebase/firebase.jsx/firebase";
-import useShowToast from "../../hooks/useShowToast";
-import useAuthStore from "../../store/authStore";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { signInWithGooglePopup } from "../../firebase";
+import { auth, firestore } from "../../firebase"
+// import useShowToast from "../../hooks/useShowToast";
+// import useAuthStore from "../../store/authStore";
+// import { doc, getDoc, setDoc } from "../../firebase"
 
 const GoogleAuth = ({ prefix }) => {
-	const [signInWithGoogle, , , error] = useSignInWithGoogle(auth);
-	const showToast = useShowToast();
+	const [signInWithGoogle, , , error] = signInWithGooglePopup(auth);
+	// const showToast = useShowToast();
 	const loginUser = useAuthStore((state) => state.login);
 
 	const handleGoogleAuth = async () => {
